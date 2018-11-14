@@ -1,0 +1,19 @@
+{
+  "name": "week-six",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bwilsoni/Week-Six.js.git"
+  },
+  "author": "Bryan Wilson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bwilsoni/Week-Six.js/issues"
+  },
+  "homepage": "https://github.com/bwilsoni/Week-Six.js#readme"
+}
