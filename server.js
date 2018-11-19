@@ -3,27 +3,35 @@ const http = require('http');
 const hostname = 'localhost';
 const port = 3000;
 
-let counter = 0;
+const notes = [];
 
-console.log("thing/wow".split("/"))
+// console.log("thing/wow".split("/"))
 const server = http.createServer((req, res) => {
-    // counter++
 
-    // console.log(counter, req.connection.localAddress)
 
-    // console.log(req.url)
-    // console.log(req.url.split("/"));
+    notes.push(decodeURI(req.url.replace("/", "")));
 
-    console.log(req.url.split("/").join("\n"))
+    let html = `
+    <h1>Notes</h1>
+    <ul>
+    {{replaceme}}
+    </ul>
+   `;
 
-    if (req.url.split("/").includes("bryan")) {
-        console.log("WOWOWOWOWO")
-    }
+    let item = `
+    <li>{{replaceme}}</li>
+    `;
+
+    let noteItems = "";
+
+    notes.forEach((note) => {
+        noteItems += item.replace("{{replaceme}}", note);
+    });
 
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html');
-    // console.log("Test: " + req.url.split("/"))
-    res.end("Test: " + req.url.split("/").join("<br>"));
+    console.log()
+    res.end(html.replace("{{replaceme}}", noteItems));
 
 });
 

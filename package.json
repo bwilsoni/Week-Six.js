@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/bwilsoni/Week-Six.js/issues"
   },
-  "homepage": "https://github.com/bwilsoni/Week-Six.js#readme"
+  "homepage": "https://github.com/bwilsoni/Week-Six.js#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
 }
