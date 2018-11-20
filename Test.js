@@ -10,7 +10,10 @@ Typescript
 var http = require('http');
 var hostname = 'localhost';
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 var port = 3000;
 var todoList = [];
 /*  Class: Todo
@@ -85,6 +88,7 @@ var TodoService = /** @class */ (function () {
     ;
     /**
      * Get Single Todo Item
+     * Possible error handling for checking index out of range of todoList
      */
     TodoService.getSingleTodos = function (res, id) {
         res.statusCode = 200;
@@ -110,9 +114,13 @@ var TodoService = /** @class */ (function () {
     /**
      * Create Todo Item
      */
-    TodoService.createTodo = function (res, todo) {
-        console.log(todo);
-        res.send("Done");
+    TodoService.createTodo = function (res, body) {
+        console.log(typeof body);
+        console.log(body);
+        console.log(typeof body.title);
+        todoList.push(new Todo(body.title, body.dueDate));
+        console.log(todoList);
+        res.send("<h1>Hey There</h1>");
         // app.post('/todo', (req, res) => createTodo(res, req.body))
     };
     /**
@@ -124,13 +132,12 @@ var TodoService = /** @class */ (function () {
     };
     return TodoService;
 }());
-var thing = new TodoService();
 // Route to display all todo's
 app.get('/todo', function (req, res) { return TodoService.getAllTodos((res)); });
 // Route to display a single, specific todo
 app.get('/todo/:id', function (req, res) { return TodoService.getSingleTodos(res, req.params.id); });
 // Route to create a new Todo item
-app.post('/todo');
+app.post('/todo', function (req, res) { return TodoService.createTodo(res, req.body); });
 // Route to mark a todo item complete
 app["delete"]('');
 app.listen(port, function () { return console.log("Example app listening on port " + port + "!"); });

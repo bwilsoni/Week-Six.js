@@ -11,7 +11,10 @@ Typescript
 const http = require('http');
 const hostname = 'localhost';
 const express = require('express');
+var bodyParser = require('body-parser')
 const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 const port = 3000
 const todoList = [];
 
@@ -113,6 +116,7 @@ class TodoService {
 
     /**
      * Get Single Todo Item
+     * Possible error handling for checking index out of range of todoList
      */
     static getSingleTodos(res, id) {
         res.statusCode = 200;
@@ -153,9 +157,15 @@ class TodoService {
     /**
      * Create Todo Item
      */
-    static createTodo(res, todo) {
-        console.log(todo);
-        res.send("Done");
+    static createTodo(res, body) {
+        console.log(typeof body)
+        console.log(body);
+
+        console.log(typeof body.title);
+
+        todoList.push(new Todo(body.title, body.dueDate));
+        console.log(todoList);
+        res.send(`<h1>Hey There</h1>`);
         // app.post('/todo', (req, res) => createTodo(res, req.body))
     }
 
@@ -168,14 +178,13 @@ class TodoService {
     }
 }
 
-let thing = new TodoService();
 
 // Route to display all todo's
 app.get('/todo', (req, res) => TodoService.getAllTodos((res)));
 // Route to display a single, specific todo
 app.get('/todo/:id', (req, res) => TodoService.getSingleTodos(res, req.params.id))
 // Route to create a new Todo item
-app.post('/todo');
+app.post('/todo', (req, res) => TodoService.createTodo(res, req.body));
 // Route to mark a todo item complete
 app.delete('');
 
