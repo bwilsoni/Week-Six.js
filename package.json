@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/bwilsoni/Week-Six.js#readme",
   "dependencies": {
-    "express": "^4.16.4"
+    "@types/node": "^10.12.9",
+    "express": "^4.16.4",
+    "tsc": "^1.20150623.0"
   }
 }

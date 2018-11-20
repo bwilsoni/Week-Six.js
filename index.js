@@ -25,42 +25,6 @@ mark things as done
 const http = require('http');
 
 const hostname = 'localhost';
-const port = 3000;
-
-const notes = [];
-
-const server = http.createServer(function (req, res) {
-
-    if (req.url.endsWith(".ico")) {
-        res.end();
-        return;
-    }
-
-    notes.push(decodeURI(req.url.replace("/", "")));
-
-    let html = `
-    <h1>Notes</h1>
-    <ul>
-      {{replaceme}}
-    </ul>
-  `;
-
-    let noteItems = "";
-
-    notes.forEach((note) => {
-        noteItems += + "<li>" + note + "</li>"
-    });
-
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/html');
-    res.end(html.replace("{{replaceme}}", noteItems));
-});
-
-server.listen(port, hostname, function () {
-    console.log(`Server running at http://${hostname}:${port}/`);
-});
-
-
 const express = require('express');
 const app = express();
 const port = 3000
