@@ -1,9 +1,22 @@
+import { read } from "fs";
+
 /* Promise
 Class
 Service Class
 JSON objects
 mark things as done
 Typescript
+*/
+
+const http = require('http');
+const hostname = 'localhost';
+const express = require('express');
+const app = express();
+const port = 3000
+const todoList = [];
+
+/*  Class: Todo
+    Properties: id, title, dueDate, isComplete
 
 Example Object
 {
@@ -13,15 +26,6 @@ Example Object
     "isComplete": false
 }
 */
-
-const http = require('http');
-
-const hostname = 'localhost';
-const express = require('express');
-const app = express();
-const port = 3000
-
-const todoList = [];
 
 class Todo {
     title: string;
@@ -41,10 +45,28 @@ class Todo {
 };
 
 // Test Data to send to browser
-todoList.push(new Todo("Test1", "Today"));
-todoList.push(new Todo("Test2", "Tommorrow"));
-todoList.push(new Todo("Test3", "Friday"));
+// todoList.push(new Todo("Test1", "Today"));
+// todoList.push(new Todo("Test2", "Tommorrow"));
+// todoList.push(new Todo("Test3", "Friday"));
 
+function createTestData(howMany: number) {
+    for (let index = 0; index < howMany; index++) {
+        todoList.push(new Todo(`${makeid()}`, `${howMany} day's from now`))
+    }
+}
+
+function makeid() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < 15; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
+// Creates random test data for todoList, pass a number of items to create
+createTestData(10);
 
 // console.log("Test Data in todoList", todoList);
 // console.log(`ID: ${todoList[2].getID()}`)
@@ -54,6 +76,8 @@ class TodoService {
      * Get All Todo Items
      */
     static getAllTodos(res) {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/html');
 
         let orderedList = `
         <ol>
@@ -76,52 +100,83 @@ class TodoService {
             let itemHTML = ``;
             Object.keys(todo).forEach(prop => {
                 itemHTML += todoProperties.replace("{{replaceme}}", `${prop}  :  ${todo[prop]}`);
-            })
+            });
             todoHTML += html.replace("{{replaceme}}", itemHTML);
         });
 
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/html');
+
         // let endHTML = orderedList.replace("{{replaceme}}", todoHTML);
         // let endHTML = `<h1>ToDo</h1> ${orderedList.replace("{{replaceme}}", todoHTML)}`;
         // console.log(endHTML);
         res.end(`<h1>ToDo</h1> ${orderedList.replace("{{replaceme}}", todoHTML)}`);
     };
 
-
     /**
      * Get Single Todo Item
      */
-    getSingleTodos(res, id) {
-        res.send("Done");
-        // app.get('/todo/:id', (req, res) => getSingleTodos(res, req.params.id))
-    }
+    static getSingleTodos(res, id) {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/html');
 
+        // console.log(`ID Raw: ${id}`);
+        // console.log(typeof id);
+        // console.log(todoList[id]);
+
+        let idNum = Number(id);
+
+        //  Test to make sure id is valid
+        if (isNaN(idNum) || !(typeof idNum === 'number') || typeof todoList[idNum] === 'undefined') {
+            res.end(`<h1>${id} is not a ToDo item. Check /todo to see all todos.`)
+        }
+
+        let todo = todoList[id];
+
+        let todoTemplate = `
+        <ul>
+        <li>ID: ${todo.getID()}</li>
+        {{replaceme}}
+        </ul>`;
+
+        let todoProperties = `
+        <li>{{replaceme}}</li>`;
+
+        let html = ``;
+
+        Object.keys(todo).forEach(prop => {
+            html += todoProperties.replace("{{replaceme}}", `${prop}  :  ${todo[prop]}`);
+        });
+
+        // console.log(`<h1>Single ToDo</h1> ${todoTemplate.replace("{{replaceme}}", html)}`)
+        res.end(`<h1>Single ToDo</h1> ${todoTemplate.replace("{{replaceme}}", html)}`);
+    }
 
     /**
      * Create Todo Item
      */
-    createTodo(res, todo) {
+    static createTodo(res, todo) {
         console.log(todo);
         res.send("Done");
         // app.post('/todo', (req, res) => createTodo(res, req.body))
     }
 
-
     /**
      * Delete Todo Item
      */
-    deleteTodo(res, id) {
+    static deleteTodo(res, id) {
         res.send("Done");
         app.delete('/todo/:id', (req, res) => res.send('Hello World!'))
     }
-
-
 }
 
 let thing = new TodoService();
-// thing.getAllTodos
 
+// Route to display all todo's
 app.get('/todo', (req, res) => TodoService.getAllTodos((res)));
-// app.get('/todo', )
+// Route to display a single, specific todo
+app.get('/todo/:id', (req, res) => TodoService.getSingleTodos(res, req.params.id))
+// Route to create a new Todo item
+app.post('/todo');
+// Route to mark a todo item complete
+app.delete('');
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

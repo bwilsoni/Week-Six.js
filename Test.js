@@ -1,9 +1,20 @@
+"use strict";
+exports.__esModule = true;
 /* Promise
 Class
 Service Class
 JSON objects
 mark things as done
 Typescript
+*/
+var http = require('http');
+var hostname = 'localhost';
+var express = require('express');
+var app = express();
+var port = 3000;
+var todoList = [];
+/*  Class: Todo
+    Properties: id, title, dueDate, isComplete
 
 Example Object
 {
@@ -13,12 +24,6 @@ Example Object
     "isComplete": false
 }
 */
-var http = require('http');
-var hostname = 'localhost';
-var express = require('express');
-var app = express();
-var port = 3000;
-var todoList = [];
 var Todo = /** @class */ (function () {
     function Todo(title, dueDate) {
         this.id;
@@ -33,9 +38,23 @@ var Todo = /** @class */ (function () {
 }());
 ;
 // Test Data to send to browser
-todoList.push(new Todo("Test1", "Today"));
-todoList.push(new Todo("Test2", "Tommorrow"));
-todoList.push(new Todo("Test3", "Friday"));
+// todoList.push(new Todo("Test1", "Today"));
+// todoList.push(new Todo("Test2", "Tommorrow"));
+// todoList.push(new Todo("Test3", "Friday"));
+function createTestData(howMany) {
+    for (var index = 0; index < howMany; index++) {
+        todoList.push(new Todo("" + makeid(), howMany + " day's from now"));
+    }
+}
+function makeid() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < 15; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+}
+// Creates random test data for todoList, pass a number of items to create
+createTestData(10);
 // console.log("Test Data in todoList", todoList);
 // console.log(`ID: ${todoList[2].getID()}`)
 var TodoService = /** @class */ (function () {
@@ -45,6 +64,8 @@ var TodoService = /** @class */ (function () {
      * Get All Todo Items
      */
     TodoService.getAllTodos = function (res) {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/html');
         var orderedList = "\n        <ol>\n        {{replaceme}}\n        </ol>\n        ";
         var todoHTML = '';
         todoList.forEach(function (todo) {
@@ -56,8 +77,6 @@ var TodoService = /** @class */ (function () {
             });
             todoHTML += html.replace("{{replaceme}}", itemHTML);
         });
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/html');
         // let endHTML = orderedList.replace("{{replaceme}}", todoHTML);
         // let endHTML = `<h1>ToDo</h1> ${orderedList.replace("{{replaceme}}", todoHTML)}`;
         // console.log(endHTML);
@@ -67,14 +86,31 @@ var TodoService = /** @class */ (function () {
     /**
      * Get Single Todo Item
      */
-    TodoService.prototype.getSingleTodos = function (res, id) {
-        res.send("Done");
-        // app.get('/todo/:id', (req, res) => getSingleTodos(res, req.params.id))
+    TodoService.getSingleTodos = function (res, id) {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/html');
+        // console.log(`ID Raw: ${id}`);
+        // console.log(typeof id);
+        // console.log(todoList[id]);
+        var idNum = Number(id);
+        //  Test to make sure id is valid
+        if (isNaN(idNum) || !(typeof idNum === 'number') || typeof todoList[idNum] === 'undefined') {
+            res.end("<h1>" + id + " is not a ToDo item. Check /todo to see all todos.");
+        }
+        var todo = todoList[id];
+        var todoTemplate = "\n        <ul>\n        <li>ID: " + todo.getID() + "</li>\n        {{replaceme}}\n        </ul>";
+        var todoProperties = "\n        <li>{{replaceme}}</li>";
+        var html = "";
+        Object.keys(todo).forEach(function (prop) {
+            html += todoProperties.replace("{{replaceme}}", prop + "  :  " + todo[prop]);
+        });
+        // console.log(`<h1>Single ToDo</h1> ${todoTemplate.replace("{{replaceme}}", html)}`)
+        res.end("<h1>Single ToDo</h1> " + todoTemplate.replace("{{replaceme}}", html));
     };
     /**
      * Create Todo Item
      */
-    TodoService.prototype.createTodo = function (res, todo) {
+    TodoService.createTodo = function (res, todo) {
         console.log(todo);
         res.send("Done");
         // app.post('/todo', (req, res) => createTodo(res, req.body))
@@ -82,14 +118,19 @@ var TodoService = /** @class */ (function () {
     /**
      * Delete Todo Item
      */
-    TodoService.prototype.deleteTodo = function (res, id) {
+    TodoService.deleteTodo = function (res, id) {
         res.send("Done");
         app["delete"]('/todo/:id', function (req, res) { return res.send('Hello World!'); });
     };
     return TodoService;
 }());
 var thing = new TodoService();
-// thing.getAllTodos
+// Route to display all todo's
 app.get('/todo', function (req, res) { return TodoService.getAllTodos((res)); });
-// app.get('/todo', )
+// Route to display a single, specific todo
+app.get('/todo/:id', function (req, res) { return TodoService.getSingleTodos(res, req.params.id); });
+// Route to create a new Todo item
+app.post('/todo');
+// Route to mark a todo item complete
+app["delete"]('');
 app.listen(port, function () { return console.log("Example app listening on port " + port + "!"); });
