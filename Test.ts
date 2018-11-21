@@ -1,72 +1,21 @@
-import { read } from "fs";
-
-/* Promise
-Class
-Service Class
-JSON objects
-mark things as done
-Typescript
-*/
-
 const http = require('http');
 const hostname = 'localhost';
 const express = require('express');
-var bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 const app = express();
+
+var Todo = require("./wwwroot/todo.js"); 
+var helpers = require("./wwwroot/helpers.js");
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('wwwroot'));
+
 const port = 3000;
-
-
 const todoList = [];
 
-/*  Class: Todo
-    Properties: id, title, dueDate, isComplete
-
-Example Object
-{
-    "id: 1234,
-    "title": "etst",
-    "dueDate": "12/25/18",
-    "isComplete": false
-}
-*/
-
-class Todo {
-    title: string;
-    dueDate: string;
-    isComplete: boolean;
-    id: number;
-    constructor(title, dueDate) {
-        this.id;
-        this.title = title;
-        this.dueDate = dueDate;
-        this.isComplete = false;
-    }
-
-    getID() {
-        return todoList.indexOf(this);
-    }
-};
-
-function createTestData(howMany: number) {
-    for (let index = 0; index < howMany; index++) {
-        todoList.push(new Todo(`${makeid()}`, `${howMany} day's from now`))
-    }
-}
-
-function makeid() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for (var i = 0; i < 15; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
-}
-
 // Creates random test data for todoList, pass a number of items to create
-createTestData(10);
+// helpers.createTestData(10, todoList);//
 
 // console.log("Test Data in todoList", todoList);
 // console.log(`ID: ${todoList[2].getID()}`)
@@ -87,22 +36,39 @@ class TodoService {
 
         let todoHTML = '';
 
-        todoList.forEach((todo) => {
-            let html = `
-            <li>ID: ${todo.getID()}
-            <ul>{{replaceme}}
-            </ul>
-            </li>
-            `;
+        todoList
+            .filter((todo) => !todo.isComplete)
+            .forEach((todo) => {
 
-            let todoProperties = `
-            <li>{{replaceme}}</li>`;
+                let id = todo.getID(todoList);
 
-            let itemHTML = ``;
-            Object.keys(todo).forEach(prop => {
-                itemHTML += todoProperties.replace("{{replaceme}}", `${prop}  :  ${todo[prop]}`);
-            });
-            todoHTML += html.replace("{{replaceme}}", itemHTML);
+                let html = `
+                    <li class="imSpecific">
+                        <strong>ID: ${id}</strong>
+                        <ul>
+                            {{replaceme}}
+                        </ul>
+                        <button id="${id}" class="completeMe">Mark Completed</button>
+                        <br />
+                        <br />
+                    </li>
+                `;
+    
+                let todoProperties = `
+                    <li>
+                        {{replaceme}}
+                    </li>`;
+
+                let itemHTML = ``;
+
+                Object
+                    .keys(todo)
+                    .forEach(prop => {
+                        itemHTML += todoProperties
+                            .replace("{{replaceme}}", `${prop}  :  ${todo[prop]}`);
+                    });
+
+                todoHTML += html.replace("{{replaceme}}", itemHTML);
         });
 
 
@@ -136,7 +102,7 @@ class TodoService {
 
         let todoTemplate = `
         <ul>
-        <li>ID: ${todo.getID()}</li>
+        <li>ID: ${todo.getID(todoList)}</li>
         {{replaceme}}
         </ul>`;
 
@@ -165,10 +131,11 @@ class TodoService {
         let id = todoList.push(new Todo(body.title, body.dueDate));
         console.log(todoList);
 
-        this.getTodo(res, id - 1);
+        // this.getTodo(res, id - 1);
 
         // res.send(`<h1>Hey There</h1>`);
         // app.post('/todo', (req, res) => createTodo(res, req.body))
+        res.redirect("/");
     }
 
     /**
