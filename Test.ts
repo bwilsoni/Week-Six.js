@@ -15,7 +15,9 @@ var bodyParser = require('body-parser')
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-const port = 3000
+const port = 3000;
+
+
 const todoList = [];
 
 /*  Class: Todo
@@ -46,11 +48,6 @@ class Todo {
         return todoList.indexOf(this);
     }
 };
-
-// Test Data to send to browser
-// todoList.push(new Todo("Test1", "Today"));
-// todoList.push(new Todo("Test2", "Tommorrow"));
-// todoList.push(new Todo("Test3", "Friday"));
 
 function createTestData(howMany: number) {
     for (let index = 0; index < howMany; index++) {
@@ -92,9 +89,10 @@ class TodoService {
 
         todoList.forEach((todo) => {
             let html = `
-            <li>ID: ${todo.getID()}</li>
+            <li>ID: ${todo.getID()}
             <ul>{{replaceme}}
             </ul>
+            </li>
             `;
 
             let todoProperties = `
@@ -118,7 +116,7 @@ class TodoService {
      * Get Single Todo Item
      * Possible error handling for checking index out of range of todoList
      */
-    static getSingleTodos(res, id) {
+    static getTodo(res, id) {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'text/html');
 
@@ -130,7 +128,8 @@ class TodoService {
 
         //  Test to make sure id is valid
         if (isNaN(idNum) || !(typeof idNum === 'number') || typeof todoList[idNum] === 'undefined') {
-            res.end(`<h1>${id} is not a ToDo item. Check /todo to see all todos.`)
+            res.end(`<h1>${id} is not a ToDo item. Check /todo to see all todos.</h1>`)
+            return
         }
 
         let todo = todoList[id];
@@ -163,9 +162,12 @@ class TodoService {
 
         console.log(typeof body.title);
 
-        todoList.push(new Todo(body.title, body.dueDate));
+        let id = todoList.push(new Todo(body.title, body.dueDate));
         console.log(todoList);
-        res.send(`<h1>Hey There</h1>`);
+
+        this.getTodo(res, id - 1);
+
+        // res.send(`<h1>Hey There</h1>`);
         // app.post('/todo', (req, res) => createTodo(res, req.body))
     }
 
@@ -173,19 +175,33 @@ class TodoService {
      * Delete Todo Item
      */
     static deleteTodo(res, id) {
-        res.send("Done");
-        app.delete('/todo/:id', (req, res) => res.send('Hello World!'))
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/html');
+
+        let idNum = Number(id);
+
+        // Test to make sure id is valid
+        if (isNaN(idNum) || !(typeof idNum === 'number') || typeof todoList[idNum] === 'undefined') {
+            res.end(`<h1>${id} is not a ToDo item. Check /todo to see all todos.`)
+        }
+        else {
+            // Mark Todo complete
+            todoList[id].isComplete = true;
+
+            // Display completed Todo
+            this.getTodo(res, id);
+        }
     }
 }
 
 
 // Route to display all todo's
-app.get('/todo', (req, res) => TodoService.getAllTodos((res)));
+app.get('/todo', (req, res) => TodoService.getAllTodos(res));
 // Route to display a single, specific todo
-app.get('/todo/:id', (req, res) => TodoService.getSingleTodos(res, req.params.id))
+app.get('/todo/:id', (req, res) => TodoService.getTodo(res, req.params.id))
 // Route to create a new Todo item
 app.post('/todo', (req, res) => TodoService.createTodo(res, req.body));
 // Route to mark a todo item complete
-app.delete('');
+app.delete('/todo/:id', (req, res) => TodoService.deleteTodo(res, req.params.id))
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
