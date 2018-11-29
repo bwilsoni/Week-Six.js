@@ -10,7 +10,7 @@
     <script src="helpers.js"></script>
 
     <style>
-        
+
         body {
             font-family: Arial, Helvetica, sans-serif;
             font-size: 20px;
@@ -86,7 +86,26 @@
         <button type="submit">
             Create Task
         </button>
+
     </form>
+
+    <form>
+        <button id="showTodos" value="showTodos" type="submit">
+            Show ToDo's
+        </button>
+    </form>
+
+    <!-- A button for seeing an individual todo item? -->
+    <!-- <form action="/todo" method="GET">
+        <label for="">Task ID</label>
+        <input name="title" type="text" id="input">
+
+        <br>
+        <button type="submit">
+            Create Task
+        </button>
+
+    </form> -->
 
     <br>
 
@@ -105,9 +124,9 @@
 
             for (let buttons = 0; buttons < completeButtons.length; buttons++) {
                 const element = completeButtons[buttons];
-                
-                element.addEventListener("click", async function() {
-                    
+
+                element.addEventListener("click", async function () {
+
                     await fetch(`todo/${element.id}`, {
                         method: "delete"
                     });
@@ -119,6 +138,18 @@
         }
 
         GetTodos();
+    </script>
+
+    <script>
+        async function RedirectTodos() {
+            console.log("stuff")
+            let response = await fetch('todo');
+            let html = await response.text();
+
+            document.getElementById("showTodos").onclick = () => {
+                location.href = "http://localhost:3000/todo";
+            };
+        }
     </script>
 
 
