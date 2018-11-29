@@ -16,9 +16,6 @@ const port = 3000;
 
 let todoList = {};
 
-// Creates random test data for todoList, pass a number of items to create
-// helpers.createTestData(10, todoList);//
-
 class TodoService {
     /* 
      * Generate unique ID for each Todo item in todoList
@@ -46,7 +43,7 @@ class TodoService {
         // Loop through entire container object and console log each obj
         for (const id in todoList) {
             if (todoList.hasOwnProperty(id)) {
-                todoHTML += todoList[id].generateHTML
+                todoHTML += todoList[id].generateHTML(id)
             };
         };
 
@@ -69,9 +66,12 @@ class TodoService {
         }
         else {
             console.log(`Generating Single TODO page with ID: ${id}`)
-            res.end(`<h1>Single ToDo - ID: ${id}</h1> ${todoList[id].generateHTML}`);
+            res.end(`<h1>Single ToDo - ID: ${id}</h1> ${todoList[id].generateHTML(id)}`);
         }
+
+        todoList[id].generateHTML();
     }
+
 
     /**
      * Create Todo Item

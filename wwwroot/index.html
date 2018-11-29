@@ -89,24 +89,6 @@
 
     </form>
 
-    <form>
-        <button id="showTodos" value="showTodos" type="submit">
-            Show ToDo's
-        </button>
-    </form>
-
-    <!-- A button for seeing an individual todo item? -->
-    <!-- <form action="/todo" method="GET">
-        <label for="">Task ID</label>
-        <input name="title" type="text" id="input">
-
-        <br>
-        <button type="submit">
-            Create Task
-        </button>
-
-    </form> -->
-
     <br>
 
     <div id="todos"></div>
@@ -139,19 +121,6 @@
 
         GetTodos();
     </script>
-
-    <script>
-        async function RedirectTodos() {
-            console.log("stuff")
-            let response = await fetch('todo');
-            let html = await response.text();
-
-            document.getElementById("showTodos").onclick = () => {
-                location.href = "http://localhost:3000/todo";
-            };
-        }
-    </script>
-
 
 </body>
 

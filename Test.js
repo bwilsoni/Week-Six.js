@@ -11,8 +11,6 @@ app.use(express.static('wwwroot'));
 var port = 3000;
 // const todoList = [];
 var todoList = {};
-// Creates random test data for todoList, pass a number of items to create
-// helpers.createTestData(10, todoList);//
 var TodoService = /** @class */ (function () {
     function TodoService() {
     }
@@ -34,7 +32,7 @@ var TodoService = /** @class */ (function () {
         // Loop through entire container object and console log each obj
         for (var id in todoList) {
             if (todoList.hasOwnProperty(id)) {
-                todoHTML += todoList[id].generateHTML;
+                todoHTML += todoList[id].generateHTML(id);
             }
             ;
         }
@@ -57,8 +55,9 @@ var TodoService = /** @class */ (function () {
         }
         else {
             console.log("Generating Single TODO page with ID: " + id);
-            res.end("<h1>Single ToDo - ID: " + id + "</h1> " + todoList[id].generateHTML);
+            res.end("<h1>Single ToDo - ID: " + id + "</h1> " + todoList[id].generateHTML(id));
         }
+        todoList[id].generateHTML();
     };
     /**
      * Create Todo Item

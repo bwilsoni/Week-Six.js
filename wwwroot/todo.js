@@ -6,8 +6,9 @@ class Todo {
         this.isComplete = false;
     }
 
-    get generateHTML() {
+    generateHTML(id) {
         let todoTemplate = `
+        <strong>ID: ${id}  <button id="${id}" class="completeMe">Mark Completed</button></strong>
         <ul>
         {{replaceme}}
         </ul>`;
@@ -24,8 +25,6 @@ class Todo {
         html = `${todoTemplate.replace("{{replaceme}}", html)}`
         return html;
     }
-
-
 }
 
 if (typeof (module) !== "undefined") {
