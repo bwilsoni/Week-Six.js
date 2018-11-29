@@ -29,7 +29,7 @@ var TodoService = /** @class */ (function () {
         res.setHeader('Content-Type', 'text/html');
         var orderedList = "\n        <ol>\n        {{replaceme}}\n        </ol>\n        ";
         var todoHTML = '';
-        // Loop through entire container object and console log each obj
+        // Loop through entire container object
         for (var id in todoList) {
             if (todoList.hasOwnProperty(id)) {
                 todoHTML += todoList[id].generateHTML(id);

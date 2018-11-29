@@ -40,7 +40,7 @@ class TodoService {
 
         let todoHTML = '';
 
-        // Loop through entire container object and console log each obj
+        // Loop through entire container object
         for (const id in todoList) {
             if (todoList.hasOwnProperty(id)) {
                 todoHTML += todoList[id].generateHTML(id)
