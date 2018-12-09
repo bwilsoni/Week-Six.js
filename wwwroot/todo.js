@@ -5,9 +5,9 @@ class Todo {
         this.isComplete = false;
     }
 
-    generateHTML(todo) {
+    generateHTML(todoID) {
         let todoTemplate = `
-        <strong>todo: ${todo}  <button todo="${todo}" class="completeMe">Mark Completed</button></strong>
+        <strong>todo: ${todoID}  <button id="${todoID}" class="completeMe">Mark Completed</button></strong>
         <ul>
         {{replaceme}}
         </ul>`;
@@ -26,31 +26,6 @@ class Todo {
     }
 }
 
-class TodoList {
-    constructor() {
-        this.items = {};
-    }
-
-    generateHTML() {
-        let orderedList = `
-        <ol>
-        {{replaceme}}
-        </ol>
-        `
-
-        let todoHTML = '';
-
-        // Loop through entire container object
-        for (const todo in this.items) {
-            if (this.items.hasOwnProperty(todo)) {
-                todoHTML += this.items[todo].generateHTML(todo)
-            };
-        };
-    }
-}
-
-
 if (typeof (module) !== "undefined") {
     module.exports = Todo;
-    module.exports = TodoList;
 }

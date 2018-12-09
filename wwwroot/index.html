@@ -119,16 +119,20 @@
             document.getElementById("input").focus();
 
             let completeButtons = document.getElementsByClassName("completeMe");
+            // console.log(completeButtons)
 
+            // Loops through all buttons labeled "completeMe"
             for (let buttons = 0; buttons < completeButtons.length; buttons++) {
                 const element = completeButtons[buttons];
 
+                // Adding event listeners for clicks on each mark completed button
                 element.addEventListener("click", async function () {
+                    console.log(`Button ID: ${element.id}`)
 
-                    await fetch(`todo/${element.id}`, {
-                        method: "delete"
-                    });
+                    // Will send delete method request to todo/**insertnumhere** to mark completed
+                    await fetch(`todo/${element.id}`, { method: "delete" });
 
+                    //  Will refresh page when todo is marked complete
                     GetTodos();
 
                 });
