@@ -14,7 +14,14 @@ app.use(express.static('wwwroot'));
 const port = 3000;
 // const todoList = [];
 
-let todoList = {};
+// let todoList = {};
+let todo = new Todo("things", "1");
+console.log(todo)
+let todoList = new Todo.TodoList();
+
+
+console.log(todoList);
+
 
 class TodoService {
     /* 
@@ -46,6 +53,8 @@ class TodoService {
                 todoHTML += todoList[id].generateHTML(id)
             };
         };
+
+
 
         res.end(`<h1>ToDo</h1> ${orderedList.replace("{{replaceme}}", todoHTML)}`);
     };
